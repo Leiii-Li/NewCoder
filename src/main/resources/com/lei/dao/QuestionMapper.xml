@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lei.dao.QuestionMapper">
+    <resultMap id="BaseResultMap" type="com.lei.model.Question">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="coment_count" property="comentCount" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="table">question</sql>
+    <sql id="selectFields">id, title, content, coment_count,create_date,user_id</sql>
+    <select id="selectLatestQuestions" resultType="com.lei.model.Question">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="table"/>
+        <if test="userId != 0">
+            WHERE user_id = #{userId}
+        </if>
+        ORDER BY create_date
+        LIMIT #{offset},#{limit}
+    </select>
+    <select id="selectLatestQuestionsByUserId" resultType="com.lei.model.Question">
+        SELECT
+        <include refid="selectFields"/>
+        FROM
+        <include refid="table"/>
+        WHERE user_id = #{userId}
+        ORDER BY create_date
+        LIMIT #{offset},#{limit}
+    </select>
+    <resultMap id="ResultMapWithBLOBs" type="com.lei.model.Question" extends="BaseResultMap">
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, title, create_date, coment_count, user_id
+  </sql>
+    <sql id="Blob_Column_List">
+    content
+  </sql>
+    <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.lei.model.QuestionExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from question
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.lei.model.QuestionExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from question
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from question
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from question
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.lei.model.QuestionExample">
+        delete from question
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.lei.model.Question">
+    insert into question (id, title, create_date, 
+      coment_count, user_id, content
+      )
+    values (#{id,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{comentCount,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.lei.model.Question">
+        insert into question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="comentCount != null">
+                coment_count,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="comentCount != null">
+                #{comentCount,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.lei.model.QuestionExample" resultType="java.lang.Integer">
+        select count(*) from question
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+
+    <update id="updateQuestionCommentCount" parameterType="String">
+        update question set  coment_count = coment_count + 1 where id = #{id}
+    </update>
+
+    <update id="updateByExampleSelective" parameterType="map">
+        update question
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.title != null">
+                title = #{record.title,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createDate != null">
+                create_date = #{record.createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.comentCount != null">
+                coment_count = #{record.comentCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.userId != null">
+                user_id = #{record.userId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.content != null">
+                content = #{record.content,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExampleWithBLOBs" parameterType="map">
+        update question
+        set id = #{record.id,jdbcType=VARCHAR},
+        title = #{record.title,jdbcType=VARCHAR},
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+        coment_count = #{record.comentCount,jdbcType=INTEGER},
+        user_id = #{record.userId,jdbcType=VARCHAR},
+        content = #{record.content,jdbcType=LONGVARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update question
+        set id = #{record.id,jdbcType=VARCHAR},
+        title = #{record.title,jdbcType=VARCHAR},
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+        coment_count = #{record.comentCount,jdbcType=INTEGER},
+        user_id = #{record.userId,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.lei.model.Question">
+        update question
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="comentCount != null">
+                coment_count = #{comentCount,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.lei.model.Question">
+    update question
+    set title = #{title,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      coment_count = #{comentCount,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+    <update id="updateByPrimaryKey" parameterType="com.lei.model.Question">
+    update question
+    set title = #{title,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      coment_count = #{comentCount,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

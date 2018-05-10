@@ -1,0 +1,2 @@
+     在使用逆向工程生成的pojo mapper时需要设置mybatis-config里面的
+     <setting name="mapUnderscoreToCamelCase" value="true"/>

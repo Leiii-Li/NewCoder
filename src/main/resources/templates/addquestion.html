@@ -1,0 +1,110 @@
+#parse("header.html")
+<link rel="stylesheet" href="/styles/index.css">
+<link rel="stylesheet" href="/styles/detail.css">
+<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="/scripts/jquery-3.2.1.js"></script>
+
+<div class="zg-wrap zu-main clearfix " role="main">
+    <div class="zu-main-content">
+        <div class="zu-main-content-inner">
+            <div class="zg-section" id="zh-home-list-title">
+                <input type="hidden" id="is-topstory">
+            </div>
+            <div class="zu-main-feed-con navigable" data-feedtype="topstory" id="zh-question-list"
+                 data-widget="navigable"
+                 data-navigable-options="{&quot;items&quot;:&quot;&gt; .zh-general-list .feed-co  ntent&quot;,&quot;offsetTop&quot;:-82}">
+                <a href="javascript:;" class="zu-main-feed-fresh-button" id="zh-main-feed-fresh-button"
+                   style="display:none"></a>
+                <div id="js-home-feed-list" class="zh-general-list topstory clearfix"
+                     data-init="{&quot;params&quot;: {}, &quot;nodename&quot;: &quot;TopStory2FeedList&quot;}"
+                     data-delayed="true" data-za-module="TopStoryFeedList">
+                    <form action="/question/add" method="post">
+                        标题：
+                        <div id="zh-question-answer-form-wrap" class="zh-question-answer-form-wrap">
+                            <div class="zm-editable-editor-wrap" style="">
+                                <div class="zm-editable-editor-outer">
+                                    <div class="zm-editable-editor-field-wrap">
+                                <textarea name="title" id="title" class="zm-editable-editor-field-element editable"
+                                          style="width:100%;"></textarea>
+                                    </div>
+                                </div>
+                                <br>
+                                内容：
+                                <!--<form id="fileForm" enctype="multipart/form-data">-->
+                                <input type="file" id="ImportPicInput" name="upload" style=" display: none"/>
+                                <div class="input-append">
+                                    <label> 插入图片：</label>
+                                    <input type="text" class="input-large" id="importPicName"/>
+                                    <a class="btn btn-default" onclick="$('#ImportPicInput').click();"> 打开</a>
+                                    <button type="button" class="btn btn-default" onclick="uploadFile();"> 插入图片
+                                    </button>
+                                </div>
+                                <!--</form>-->
+                                <br>
+                                <br>
+                                <div class="zm-editable-editor-outer">
+                                    <div class="zm-editable-editor-field-wrap">
+                                        <textarea id="content" name="content" rows="10" cols="38"
+                                                  class="zm-editable-editor-field-element editable"></textarea>
+                                        <script type="text/javascript">CKEDITOR.replace('content');</script>
+                                    </div>
+                                </div>
+                                <div class="zm-command clearfix">
+                            <span class=" zg-right">
+                                <button type="submit" class="submit-button zg-btn-blue"
+                                >发布</button></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function (e) {
+                $('body').on('change', $('#ImportPicInput'), function () {
+                    $("#importPicName").val($("#ImportPicInput").val());
+                });
+            });
+            function uploadFile() {
+                var fileObj = document.getElementById("ImportPicInput").files[0]; // js 获取文件对象
+                var formFile = new FormData();
+                formFile.append("file", fileObj);
+                var data = formFile;
+                $.ajax({
+                    url: '/uploadImage/',
+                    type: 'POST',
+                    data: data,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        var result = eval('(' + result + ')');
+                        if (result.code == 0) {
+                            CKEDITOR.instances.content.insertHtml("<img src = " + result.msg + ">");
+                        } else {
+                            alert("Failed ");
+                        }
+                    }
+                });
+
+//                function uploadFile() {
+//                    var data = new FormData(document.getElementById('fileForm'));
+//                    $.ajax({
+//                        url: '/uploadImage/',
+//                        type: 'POST',
+//                        data: data,
+//                        cache: false,
+//                        processData: false,
+//                        contentType: false,
+//                        success: function (result) {
+//
+//                        }
+//                    });
+
+            }
+        </script>
+    </div>
+    #parse("js.html")
+    <script type="text/javascript" src="/scripts/main/site/detail.js"></script>
+    #parse("footer.html")
